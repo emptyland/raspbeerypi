@@ -18,6 +18,13 @@
 	```
 > 由于给所有`wheel`组的成员设置了免密码，可能不太安全。
 
+### 配置vim
+
+```
+curl 'https://raw.githubusercontent.com/emptyland/scripts/master/conf/comm/vimrc' > ~/.vimrc
+```
+
+
 ## 如何安装fish shell
 
 fish shell在pidroa的官方源里没有，需要从源代码安装。
