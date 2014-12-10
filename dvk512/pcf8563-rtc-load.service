@@ -1,0 +1,12 @@
+[Unit]
+Description=Sync time from PCF8563 RTC I2C Chip
+Before=time-sync.target
+Wants=time-sync.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/share/dvk512/rtc-sync
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

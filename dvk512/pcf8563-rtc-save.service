@@ -1,0 +1,10 @@
+[Unit]
+Description=Sync time from PCF8563 RTC I2C Chip
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/hwclock -w
+RemainAfterExit=yes
+
+[Install]
+WantedBy=shutdown.target
