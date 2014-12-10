@@ -76,7 +76,7 @@ cd ~
 wget 'http://fishshell.com/files/2.1.1/fish-2.1.1.tar.gz'
 ```
 
-### 变异并安装
+### 编译并安装
 ```
 tar vxzf fish-2.1.1.tar.gz
 cd fish-2.1.1
