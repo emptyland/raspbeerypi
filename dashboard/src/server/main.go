@@ -7,16 +7,18 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"api"
 )
 
 var _ = fmt.Println
 
 type Conf struct {
-	PemCrt  string    `json:"pem_crt"`
-	PemKey  string    `json:"pem_key"`
-	Address string    `json:"address"`
-	Timeout int64     `json:"timeout"`
-	HTDoc   HTDocDef  `json:"htdoc"`
+	PemCrt  string   `json:"pem_crt"`
+	PemKey  string   `json:"pem_key"`
+	Address string   `json:"address"`
+	Timeout int64    `json:"timeout"`
+	HTDoc   HTDocDef `json:"htdoc"`
 }
 
 type HTDocDef struct {
@@ -43,11 +45,8 @@ func main() {
 func serve(conf *Conf) {
 	handler := http.NewServeMux()
 
-	//handleFs(&conf.HTDoc, handler)
+	handler.Handle("/api/", api.NewService(&api.HelloModel{}))
 	handler.Handle("/", http.FileServer(http.Dir(conf.HTDoc.Root)))
-	handler.HandleFunc("/api/hello", func (w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, World\n"))
-	})
 
 	server := &http.Server{
 		Addr:         conf.Address,
@@ -57,4 +56,3 @@ func serve(conf *Conf) {
 	}
 	log.Fatal(server.ListenAndServeTLS(conf.PemCrt, conf.PemKey))
 }
-

@@ -1,3 +1,4 @@
+*.a
 *.o
 dashboard/pem
 dashboard/bin
