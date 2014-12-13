@@ -23,13 +23,13 @@ func (self *HelloModel) GetApiHello(res *ResponseHello) error {
 }
 
 type RequestHello struct {
-    Key int `json:"key"`
+	Key int `json:"key"`
 }
 
 func (self *HelloModel) PostApiHello(res *ResponseHello, req *RequestHello) error {
-    res.Key = req.Key
-    self.Key = req.Key
-    res.Msg = "ok"
+	res.Key = req.Key
+	self.Key = req.Key
+	res.Msg = "ok"
 
-    return nil
+	return nil
 }

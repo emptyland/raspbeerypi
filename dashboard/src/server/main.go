@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"api"
+	"model"
 )
 
 var _ = fmt.Println
@@ -45,7 +46,11 @@ func main() {
 func serve(conf *Conf) {
 	handler := http.NewServeMux()
 
-	handler.Handle("/api/", api.NewService(&api.HelloModel{}))
+	handler.Handle("/api/hello", api.NewService(&api.HelloModel{}))
+	handler.Handle("/api/state", api.NewService(&model.StateModel{}))
+	handler.Handle("/api/memory", api.NewService(&model.MemoryModel{}))
+	handler.Handle("/api/disk", api.NewService(&model.DiskUsageModel{}))
+
 	handler.Handle("/", http.FileServer(http.Dir(conf.HTDoc.Root)))
 
 	server := &http.Server{
