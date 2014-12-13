@@ -87,7 +87,7 @@
             <div class="panel-body" ng-controller="DiskUsageController">
 
                 <div class="row" ng-repeat="usage in usageEntries">
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         {{ usage.mountPoint }}
                     </div>
 
@@ -95,7 +95,7 @@
                         {{ usage.usedPercent }} %
                     </div>
 
-                    <div class="col-md-10">
+                    <div class="col-md-9">
                         <div class="progress">
                             <div class="progress-bar {{ usage.color }}" style="width: {{ usage.usedPercent }}%">
                                 <span class="sr-only">Disk Used</span>
