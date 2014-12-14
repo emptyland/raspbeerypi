@@ -10,7 +10,7 @@ int bridge_statfs(const char *mp, int *entry) {
 	int rv = statfs(mp, &buf);
 	if (rv < 0)
 		return rv;
-	
+
 	entry[0] = buf.f_bsize * buf.f_blocks;
 	entry[1] = buf.f_bsize * (buf.f_blocks - buf.f_bfree);
 	return 0;
@@ -19,12 +19,12 @@ int bridge_statfs(const char *mp, int *entry) {
 import "C"
 
 import (
-	"unsafe"
-	"fmt"
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"regexp"
+	"unsafe"
 
 	"api"
 )
@@ -61,11 +61,11 @@ func (self *DiskUsageModel) GetApiDisk(res *diskUsageResponse) error {
 			return fmt.Errorf("statfs() fail")
 		}
 
-		res.Entries[i] = diskUsageVO {
+		res.Entries[i] = diskUsageVO{
 			MountPoint: entry.MountPoint,
-			FSType: entry.FSType,
-			Total: int64(values[0]),
-			Used:  int64(values[1]),
+			FSType:     entry.FSType,
+			Total:      int64(values[0]),
+			Used:       int64(values[1]),
 		}
 	}
 	return nil
@@ -73,19 +73,19 @@ func (self *DiskUsageModel) GetApiDisk(res *diskUsageResponse) error {
 
 var kSpaceRe = regexp.MustCompile("\\s+")
 var kIgnoreFs = map[string]bool{
-	"rootfs":     true,
-	"devtmpfs":   true,
-	"proc":       true,
-	"sysfs":      true,
-	"securityfs": true,
-	"devpt":      true,
-	"devpts":     true,
-	"cgroup":     true,
-	"pstore":     true,
-	"systemd-1":  true,
-	"mqueue":     true,
-	"debugfs":    true,
-	"binfmt_misc":true,
+	"rootfs":      true,
+	"devtmpfs":    true,
+	"proc":        true,
+	"sysfs":       true,
+	"securityfs":  true,
+	"devpt":       true,
+	"devpts":      true,
+	"cgroup":      true,
+	"pstore":      true,
+	"systemd-1":   true,
+	"mqueue":      true,
+	"debugfs":     true,
+	"binfmt_misc": true,
 }
 
 func readMtab() ([]mtabEntry, error) {

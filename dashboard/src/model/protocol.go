@@ -5,7 +5,7 @@ const (
 )
 
 type stateResponse struct {
-	Load           float32 `json:"load"`
+	LoadAvg      []float32 `json:"loadAvg"`
 	CPUPercent     float32 `json:"cpuPercent"`
 	CPUTemperature float32 `json:"cpuTemperature"`
 }

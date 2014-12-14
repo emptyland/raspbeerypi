@@ -4,7 +4,7 @@ var app = angular.module('dashboard', []);
 
 app.controller('StateController', function($scope, $http) {
     $scope.state = {
-        load: "N/A",
+        loadAvg: ["N/A", "N/A", "N/A"],
         cpuTemperature: "N/A",
         cpuPercent: "N/A"
     };

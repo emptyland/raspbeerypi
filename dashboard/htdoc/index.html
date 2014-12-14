@@ -43,7 +43,7 @@
             <div class="row" ng-controller="StateController">
                 <div class="navbar-header col-md-4">
                     <div class="navbar-brand">
-                        <div>Load: {{ state.load.toFixed(2) }}</div>
+                        <div>Load: {{ state.loadAvg[0].toFixed(2) }} {{ state.loadAvg[1].toFixed(2) }} {{ state.loadAvg[2].toFixed(2) }}</div>
                     </div>
                 </div>
                 <div class="navbar-header col-md-4">
