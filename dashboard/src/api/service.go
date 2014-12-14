@@ -64,7 +64,7 @@ func (self *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	for _, sgement := range sgements {
 		methodName += strings.Title(sgement)
 	}
-	log.Println("request function: ", methodName)
+	//log.Println("request function: ", methodName)
 
 	stub := reflect.ValueOf(self.ForServe)
 	method := stub.MethodByName(methodName)
@@ -118,7 +118,17 @@ func dispatchMethod(w http.ResponseWriter, r *http.Request, method reflect.Value
 }
 
 func call(w http.ResponseWriter, method reflect.Value, inputs []reflect.Value) {
-	method.Call(inputs)
+	rv := method.Call(inputs)
+	if len(rv) >= 1 {
+		if !rv[0].IsNil() && rv[0].Kind() == reflect.Interface {
+			if err, ok := rv[0].Interface().(error); ok {
+				http.Error(w, kErrInternal, 503)
+
+				log.Printf("call fail(%v): %v", method.Type(), err)
+				return
+			}
+		}
+	}
 
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(inputs[0].Interface()); err != nil {

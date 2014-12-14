@@ -1,13 +1,16 @@
 package model
 
 const (
-	kMtabPath = "/etc/mtab"
+	kMtabPath    = "/etc/mtab"
+	kLoadAvgPath = "/proc/loadavg"
+	kCPUStatPath = "/proc/stat"
+	kTemp0Path   = "/sys/class/thermal/thermal_zone0/temp"
 )
 
 type stateResponse struct {
-	LoadAvg      []float32 `json:"loadAvg"`
-	CPUPercent     float32 `json:"cpuPercent"`
-	CPUTemperature float32 `json:"cpuTemperature"`
+	LoadAvg        []float32 `json:"loadAvg"`
+	CPUPercent     float32   `json:"cpuPercent"`
+	CPUTemperature float32   `json:"cpuTemperature"`
 }
 
 type memoryResponse struct {

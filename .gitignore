@@ -1,4 +1,5 @@
 *.a
 *.o
+*.swp
 dashboard/pem
 dashboard/bin
