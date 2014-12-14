@@ -12,29 +12,32 @@
     </head>
 
     <body>
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Raspbeery Pi</a>
-        </div>
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Dashboard</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li style="padding-top: 15px;"><div class="g-plusone" data-size="medium"></div></li>
-            </ul>
+    <div id='nav-parent'>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-controller="NavController">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Raspbeery Pi</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="{{ navBars.dashboard.active }}"><a href="#" ng-click="switchNavBar('dashboard')">Dashboard</a></li>
+                    <li class="{{ navBars.console.active }}"><a href="#" ng-click="switchNavBar('console')">Console</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li style="padding-top: 15px;"><div class="g-plusone" data-size="medium"></div></li>
+                </ul>
             </div><!--/.nav-collapse -->
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="nav-dashboard" style="visibility: {{ navBars.dashboard.visibility }};">
         <br />
         <br />
         <br />
@@ -106,11 +109,15 @@
 
             </div>
         </div>
-    </div>
+    </div> <!-- dashboard -->
 
-    <div>
+    <div class="container" id="nav-console" style="visibility: {{ navBars.console.visibility }};">
+        <br />
+        <br />
+        <br />
+        Console
+    </div> <!-- console -->
 
-    </div>
-
+    </div> <!-- root -->
     </body>
 </html>

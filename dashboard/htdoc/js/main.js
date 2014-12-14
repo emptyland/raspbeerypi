@@ -2,6 +2,50 @@
 
 var app = angular.module('dashboard', []);
 
+var navBars = {
+    'dashboard': {
+        id: 'navDashboard',
+        visibility: 'visible',
+        active: 'active',
+        dom: null
+    },
+    'console': {
+        id: 'navConsole',
+        visibility: 'hidden',
+        active: '',
+        dom: null
+    }
+};
+
+app.controller('NavController', function($scope) {
+    $scope.switchNavBar = function (index) {
+
+        for (k in navBars) {
+            if (navBars[k].active === 'active') {
+                navBars[k].dom = $('#nav-' + k).remove()
+            }
+
+            navBars[k].visibility = 'hidden';
+            navBars[k].active = '';
+
+            console.log(navBars[k]);
+        }
+        navBars[index].visibility = 'visible';
+        navBars[index].active = 'active';
+
+        $('#nav-parent').append(navBars[index].dom);
+
+        $scope.navBars = navBars;
+    };
+
+    for (k in navBars) {
+        if (navBars[k].active != 'active') {
+            navBars[k].dom = $('#nav-' + k).remove()
+        }
+    }
+    $scope.switchNavBar('dashboard');
+});
+
 app.controller('StateController', function($scope, $http) {
     $scope.state = {
         loadAvg: ["N/A", "N/A", "N/A"],
@@ -67,25 +111,5 @@ app.controller('DiskUsageController', function ($scope, $http) {
         }
     });
 });
-
-// app.controller('NameController', function($scope) {
-//     $scope.name = 'shit';
-// });
-
-// app.controller('AjaxController', function($scope, $http) {
-//     $http.get('api/hello').success(function(data) {
-//         $scope.res = data;
-//     });
-// });
-
-// app.controller('CommitController', function($scope, $http) {
-//     $scope.commit = function (key) {
-//         $http.post('api/hello', {
-//             'key': key
-//         }).success(function (data, status) {
-//             console.log(data)
-//         });
-//     }
-// });
 
 }()); // end of module
