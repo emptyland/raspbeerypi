@@ -7,13 +7,11 @@ var navBars = {
         visibility: 'visible',
         active: 'active',
         dom: null
-    },
-    'console': {
+    }, 'console': {
         visibility: 'hidden',
         active: '',
         dom: null
-    },
-    'devices': {
+    }, 'devices': {
         visibility: 'hidden',
         active: '',
         dom: null
