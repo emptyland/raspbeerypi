@@ -12,7 +12,8 @@
     </head>
 
     <body>
-    <div id='nav-parent'>
+
+    <div id="nav-parent" style="position: relative; top: 70px;"> <!-- nav tabs -->
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-controller="NavController">
         <div class="container">
@@ -29,6 +30,7 @@
                 <ul class="nav navbar-nav">
                     <li class="{{ navBars.dashboard.active }}"><a href="#" ng-click="switchNavBar('dashboard')">Dashboard</a></li>
                     <li class="{{ navBars.console.active }}"><a href="#" ng-click="switchNavBar('console')">Console</a></li>
+                    <li class="{{ navBars.devices.active }}"><a href="#" ng-click="switchNavBar('devices')">Devices</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li style="padding-top: 15px;"><div class="g-plusone" data-size="medium"></div></li>
@@ -37,10 +39,7 @@
         </div>
     </div>
 
-    <div class="container" id="nav-dashboard" style="visibility: {{ navBars.dashboard.visibility }};">
-        <br />
-        <br />
-        <br />
+    <div class="container" id="nav-dashboard">
         <nav class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
             <div class="row" ng-controller="StateController">
@@ -111,13 +110,15 @@
         </div>
     </div> <!-- dashboard -->
 
-    <div class="container" id="nav-console" style="visibility: {{ navBars.console.visibility }};">
-        <br />
-        <br />
-        <br />
+    <div class="container" id="nav-console">
         Console
     </div> <!-- console -->
 
-    </div> <!-- root -->
+    <div class="container" id="nav-devices">
+        Devices
+    </div>
+
+    </div> <!-- nav tabs -->
+
     </body>
 </html>

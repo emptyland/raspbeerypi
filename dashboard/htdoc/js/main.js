@@ -4,13 +4,16 @@ var app = angular.module('dashboard', []);
 
 var navBars = {
     'dashboard': {
-        id: 'navDashboard',
         visibility: 'visible',
         active: 'active',
         dom: null
     },
     'console': {
-        id: 'navConsole',
+        visibility: 'hidden',
+        active: '',
+        dom: null
+    },
+    'devices': {
         visibility: 'hidden',
         active: '',
         dom: null
@@ -27,8 +30,6 @@ app.controller('NavController', function($scope) {
 
             navBars[k].visibility = 'hidden';
             navBars[k].active = '';
-
-            console.log(navBars[k]);
         }
         navBars[index].visibility = 'visible';
         navBars[index].active = 'active';
