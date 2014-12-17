@@ -4,6 +4,7 @@ const (
 	kMtabPath    = "/etc/mtab"
 	kLoadAvgPath = "/proc/loadavg"
 	kCPUStatPath = "/proc/stat"
+	kMemInfoPath = "/proc/meminfo"
 	kTemp0Path   = "/sys/class/thermal/thermal_zone0/temp"
 )
 
@@ -14,9 +15,9 @@ type stateResponse struct {
 }
 
 type memoryResponse struct {
-	Total    int `json:"total"`
-	Used     int `json:"used"`
-	SwapUsed int `json:"swapUsed"`
+	Total    int64 `json:"total"`
+	Used     int64 `json:"used"`
+	SwapUsed int64 `json:"swapUsed"`
 }
 
 type diskUsageVO struct {
