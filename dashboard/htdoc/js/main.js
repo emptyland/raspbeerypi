@@ -111,4 +111,16 @@ app.controller('DiskUsageController', function ($scope, $http) {
     });
 });
 
+app.controller('JobController', function ($scope, $http) {
+    $scope.jobs = [
+        {
+            title: "Crontab 1",
+            desc: "Demo Job"
+        }, {
+            title: "Crontab 2",
+            desc: "Demo Job"
+        }
+    ];
+});
+
 }()); // end of module
