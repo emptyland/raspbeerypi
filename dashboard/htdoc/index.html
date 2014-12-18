@@ -14,9 +14,9 @@
 
     <body>
 
-    <div id="nav-parent" style="position: relative; top: 70px;"> <!-- nav tabs -->
+    <div id="nav-parent" style="position: relative; top: 70px;" ng-controller="NavController"> <!-- nav tabs -->
 
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-controller="NavController">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <div class="container" id="nav-dashboard">
+    <div class="container" ng-show="navBars.current === 'dashboard'">
         <nav class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
             <div class="row" ng-controller="StateController">
@@ -111,7 +111,7 @@
         </div>
     </div> <!-- dashboard -->
 
-    <div class="container" id="nav-console">
+    <div class="container" ng-show="navBars.current === 'console'">
 
     <div class="list-group" ng-controller="JobController">
         <div class="list-group-item" ng-repeat="job in jobs">
@@ -123,15 +123,24 @@
                     <a href="javascript:void(0);" class="pi-link-btn glyphicon glyphicon-remove-circle" aria-hidden="true"></a>
                 </div>
             </div>
-            <p class="list-group-item-text">
-            {{ job.desc }}
-            </p>
+            <div class="list-group-item-text row">
+                <div class="col-md-4">
+                    <span class="label label-info" ng-show="job.enable">enable</span>
+                    <span class="label label-default" ng-hide="job.enable">disable</span>
+                    <span class="label label-primary">{{ job.lang }}</span>
+                    <span class="label label-default">{{ job.cron }}</span>
+                </div>
+
+                <div class="col-md-2">
+
+                </div>
+            </div>
         </div>
     </div>
 
     </div> <!-- console -->
 
-    <div class="container" id="nav-devices">
+    <div class="container" ng-show="navBars.current === 'devices'">
         Devices
     </div>
 

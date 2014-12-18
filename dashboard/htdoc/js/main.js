@@ -2,46 +2,30 @@
 
 var app = angular.module('dashboard', []);
 
-var navBars = {
-    'dashboard': {
-        visibility: 'visible',
-        active: 'active',
-        dom: null
-    }, 'console': {
-        visibility: 'hidden',
-        active: '',
-        dom: null
-    }, 'devices': {
-        visibility: 'hidden',
-        active: '',
-        dom: null
-    }
-};
-
 app.controller('NavController', function($scope) {
+    var navBars = {
+        'dashboard': {
+            active: 'active'
+        }, 'console': {
+            active: ''
+        }, 'devices': {
+            active: ''
+        },
+
+        current: 'dashboard'
+    };
+
     $scope.switchNavBar = function (index) {
 
         for (k in navBars) {
-            if (navBars[k].active === 'active') {
-                navBars[k].dom = $('#nav-' + k).remove()
-            }
-
-            navBars[k].visibility = 'hidden';
             navBars[k].active = '';
         }
-        navBars[index].visibility = 'visible';
         navBars[index].active = 'active';
-
-        $('#nav-parent').append(navBars[index].dom);
+        navBars.current = index;
 
         $scope.navBars = navBars;
     };
 
-    for (k in navBars) {
-        if (navBars[k].active != 'active') {
-            navBars[k].dom = $('#nav-' + k).remove()
-        }
-    }
     $scope.switchNavBar('dashboard');
 });
 
@@ -114,13 +98,36 @@ app.controller('DiskUsageController', function ($scope, $http) {
 app.controller('JobController', function ($scope, $http) {
     $scope.jobs = [
         {
-            title: "Crontab 1",
-            desc: "Demo Job"
+            title: 'Crontab 1',
+            index: 0,
+            desc: 'Demo Job',
+            lang: 'bash',
+            cron: '1 * * * *',
+            enable: true
         }, {
             title: "Crontab 2",
-            desc: "Demo Job"
+            index: 1,
+            desc: "Demo Job",
+            lang: 'python',
+            cron: '1 1 * * *',
+            enable: false
         }
     ];
+
+    $scope.onEdit = function (index) {
+        console.log('onEdit');
+        console.log(index);
+    };
+
+    $scope.onEnable = function (index) {
+        console.log('onEnable');
+        console.log(index);
+    }
+
+    $scope.onDelete = function (index) {
+        console.log('onDelete');
+        console.log(index);
+    }
 });
 
 }()); // end of module
