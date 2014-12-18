@@ -3,7 +3,8 @@ a.pi-link-btn {
     color: black;
 }
 
-div.#nav-parent {
+div.pi-code-ed {
     position: relative;
-    top: 70px;
+    height: 400px;
+    z-index: 100;
 }

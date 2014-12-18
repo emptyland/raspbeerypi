@@ -51,7 +51,10 @@ func serve(conf *Conf) {
 	handler.Handle("/api/memory", api.NewService(&model.MemoryModel{}))
 	handler.Handle("/api/disk", api.NewService(&model.DiskUsageModel{}))
 
-	handler.Handle("/", http.FileServer(http.Dir(conf.HTDoc.Root)))
+	proxy := &fileServerProxy {
+		Handler: http.FileServer(http.Dir(conf.HTDoc.Root)),
+	}
+	handler.Handle("/", proxy)
 
 	server := &http.Server{
 		Addr:         conf.Address,
@@ -60,4 +63,39 @@ func serve(conf *Conf) {
 		WriteTimeout: time.Duration(conf.Timeout) * time.Second,
 	}
 	log.Fatal(server.ListenAndServeTLS(conf.PemCrt, conf.PemKey))
+}
+
+type fileServerProxy struct {
+	Handler http.Handler
+}
+
+var _ = (http.Handler)(&fileServerProxy{})
+
+const (
+	kNavTab = "nav-tab"
+	kNavTabDefault = "dashboard"
+)
+
+func (self *fileServerProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		// proxy it!
+		self.Handler.ServeHTTP(w, r)
+		return
+	}
+
+	cookie, err := r.Cookie(kNavTab)
+	if err != nil {
+		cookie = &http.Cookie {
+			Name: kNavTab,
+			Value: kNavTabDefault,
+			//Domain: "/",
+			Expires: time.Now().Add(2 * time.Hour),
+		}
+	} else {
+		log.Println("cookie:", cookie)
+	}
+
+	http.SetCookie(w, cookie)
+	// proxy it!
+	self.Handler.ServeHTTP(w, r)
 }

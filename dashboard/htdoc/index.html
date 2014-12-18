@@ -7,6 +7,7 @@
     <script src="js/jquery-2.1.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
+    <script src="js/angular-cookies.js"></script>
     <script src="js/highcharts-custom.js"></script>
     <script src="js/main.js"></script>
     <title>Raspbeery Pi</title>
@@ -137,6 +138,21 @@
             </div>
         </div>
     </div>
+
+
+    <div>
+        <div class="row">
+
+        </div>
+        <div id="nv-editor" class="pi-code-ed"></div>
+    </div>
+
+    <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var editor = ace.edit("nv-editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/sh");
+    </script>
 
     </div> <!-- console -->
 

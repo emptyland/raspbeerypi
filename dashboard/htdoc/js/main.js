@@ -1,32 +1,34 @@
+//'use strict';
+
 (function () {
 
-var app = angular.module('dashboard', []);
+var app = angular.module('dashboard', ['ngCookies']);
 
-app.controller('NavController', function($scope) {
+app.controller('NavController', function($scope, $cookies) {
     var navBars = {
-        'dashboard': {
-            active: 'active'
-        }, 'console': {
-            active: ''
-        }, 'devices': {
-            active: ''
-        },
+        'dashboard': {}, 'console': {}, 'devices': {},
 
         current: 'dashboard'
     };
 
     $scope.switchNavBar = function (index) {
+        console.log(navBars);
 
-        for (k in navBars) {
+        for (var k in navBars) {
             navBars[k].active = '';
         }
         navBars[index].active = 'active';
         navBars.current = index;
-
+        $cookies['nav-tab'] = index;
         $scope.navBars = navBars;
     };
 
-    $scope.switchNavBar('dashboard');
+    var initTab = $cookies['nav-tab'];
+    if (typeof initTab != 'string') {
+        initTab = 'dashboard';
+    }
+
+    $scope.switchNavBar(initTab);
 });
 
 app.controller('StateController', function($scope, $http) {
@@ -75,7 +77,7 @@ app.controller('DiskUsageController', function ($scope, $http) {
     $http.get('api/disk').success(function(data) {
         $scope.usageEntries = data.entries;
 
-        for (i in $scope.usageEntries) {
+        for (var i in $scope.usageEntries) {
             var usage = $scope.usageEntries[i];
 
             if (usage.total == 0) {
