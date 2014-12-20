@@ -30,3 +30,24 @@ type diskUsageVO struct {
 type diskUsageResponse struct {
 	Entries []diskUsageVO `json:"entries"`
 }
+
+type jobContentVO struct {
+	ID     int    `json:"id"`
+	Title  string `json:"title"`
+	Desc   string `json:"desc"`
+	Code   string `json:"code"`
+	Lang   string `json:"lang"`
+	Cron   string `json:"cron"`
+	Enable bool   `json:"enable"`
+}
+
+type jobContentResponse struct {
+	Entries []jobContentVO `json:"entries"`
+}
+
+type jobContentRequest jobContentResponse
+
+type operationResponse struct {
+	Ok  bool   `json:"ok"`
+	Msg string `json:"msg"`
+}

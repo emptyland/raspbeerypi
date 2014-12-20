@@ -43,15 +43,18 @@ func main() {
 	serve(conf)
 }
 
+// api/job/list
+// api/job/content
+// api/job/run
 func serve(conf *Conf) {
 	handler := http.NewServeMux()
 
-	handler.Handle("/api/hello", api.NewService(&api.HelloModel{}))
 	handler.Handle("/api/state", api.NewService(&model.StateModel{}))
 	handler.Handle("/api/memory", api.NewService(&model.MemoryModel{}))
 	handler.Handle("/api/disk", api.NewService(&model.DiskUsageModel{}))
+	handler.Handle("/api/job/", model.NewJobService())
 
-	proxy := &fileServerProxy {
+	proxy := &fileServerProxy{
 		Handler: http.FileServer(http.Dir(conf.HTDoc.Root)),
 	}
 	handler.Handle("/", proxy)
@@ -72,7 +75,7 @@ type fileServerProxy struct {
 var _ = (http.Handler)(&fileServerProxy{})
 
 const (
-	kNavTab = "nav-tab"
+	kNavTab        = "nav-tab"
 	kNavTabDefault = "dashboard"
 )
 
@@ -85,8 +88,8 @@ func (self *fileServerProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	cookie, err := r.Cookie(kNavTab)
 	if err != nil {
-		cookie = &http.Cookie {
-			Name: kNavTab,
+		cookie = &http.Cookie{
+			Name:  kNavTab,
 			Value: kNavTabDefault,
 			//Domain: "/",
 			Expires: time.Now().Add(2 * time.Hour),

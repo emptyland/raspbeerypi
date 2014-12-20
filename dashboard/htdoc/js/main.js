@@ -12,7 +12,6 @@ app.controller('NavController', function($scope, $cookies) {
     };
 
     $scope.switchNavBar = function (index) {
-        console.log(navBars);
 
         for (var k in navBars) {
             navBars[k].active = '';
@@ -98,27 +97,30 @@ app.controller('DiskUsageController', function ($scope, $http) {
 });
 
 app.controller('JobController', function ($scope, $http) {
-    $scope.jobs = [
-        {
-            title: 'Crontab 1',
-            index: 0,
-            desc: 'Demo Job',
-            lang: 'bash',
-            cron: '1 * * * *',
-            enable: true
-        }, {
-            title: "Crontab 2",
-            index: 1,
-            desc: "Demo Job",
-            lang: 'python',
-            cron: '1 1 * * *',
-            enable: false
-        }
-    ];
 
-    $scope.onEdit = function (index) {
-        console.log('onEdit');
-        console.log(index);
+    var updateList = function () {
+        $http.get('api/job/list').success(function(data) {
+            jobs = {}
+
+            for (var i in data.entries) {
+                var entry = data.entries[i];
+                jobs[entry.id] = entry;
+            }
+
+            $scope.jobs = jobs;
+        });
+    };
+    updateList();
+
+
+    $scope.isEditing = false;
+
+    $scope.onEdit = function (job) {
+        $scope.metadata = job;
+
+        $scope.onLang(job.lang);
+        $scope.editor.setValue(job.code);
+        $scope.isEditing = true;
     };
 
     $scope.onEnable = function (index) {
@@ -129,6 +131,70 @@ app.controller('JobController', function ($scope, $http) {
     $scope.onDelete = function (index) {
         console.log('onDelete');
         console.log(index);
+    }
+
+    var langs = {
+        'bash': {
+            name: 'Bash',
+            color: 'ace/mode/sh'
+        },
+        'python': {
+            name: 'Python 2',
+            color: 'ace/mode/python'
+        },
+        'node.js': {
+            name: 'Node.js',
+            color: 'ace/mode/javascript'
+        }
+    };
+
+    $scope.langs = langs;
+
+    var editor = ace.edit("nv-editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/sh");
+
+    $scope.editor = editor;
+
+    $scope.lang = {
+        current: 'bash'
+    };
+
+    $scope.metadata = {
+        title: '',
+        cron: ''
+    };
+
+    $scope.onLang = function (lang) {
+        $scope.metadata.lang = lang;
+        $scope.editor.getSession().setMode(langs[lang].color);
+    };
+
+    $scope.onSave = function (id) {
+        $scope.metadata.code = $scope.editor.getValue();
+
+        $http.post('/api/job/content',
+            { entries: [ $scope.metadata ] }
+        ).success(function (data) {
+            $scope.jobs[id] = $scope.metadata;
+            $scope.isEditing = false;
+
+            console.log(data);
+        });
+    };
+
+    $scope.onCancel = function (index) {
+        $scope.isEditing = false;
+    };
+
+    $scope.onRun = function (index) {
+        $http.post('/api/job/run',
+            { entries: [ $scope.metadata ] }
+        ).success(function (data) {
+            console.log(data);
+        }).error(function (data) {
+            console.log(data);
+        });
     }
 });
 

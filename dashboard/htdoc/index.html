@@ -9,6 +9,7 @@
     <script src="js/angular.min.js"></script>
     <script src="js/angular-cookies.js"></script>
     <script src="js/highcharts-custom.js"></script>
+    <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/main.js"></script>
     <title>Raspbeery Pi</title>
     </head>
@@ -112,16 +113,16 @@
         </div>
     </div> <!-- dashboard -->
 
-    <div class="container" ng-show="navBars.current === 'console'">
+    <div class="container" ng-controller="JobController" ng-show="navBars.current === 'console'">
 
-    <div class="list-group" ng-controller="JobController">
+    <div class="list-group" ng-hide="isEditing">
         <div class="list-group-item" ng-repeat="job in jobs">
             <div class="row">
                 <h4 class="col-md-10 list-group-item-heading">{{ job.title }}</h4>
-                <div class="col-md-2">
-                    <a href="javascript:void(0);" class="pi-link-btn glyphicon glyphicon-pencil" aria-hidden="true"></a>
-                    <a href="javascript:void(0);" class="pi-link-btn glyphicon glyphicon-ban-circle" aria-hidden="true"></a>
-                    <a href="javascript:void(0);" class="pi-link-btn glyphicon glyphicon-remove-circle" aria-hidden="true"></a>
+                <div class="col-md-2" align="right">
+                    <a href="javascript:void(0);" ng-click="onEdit(job)" class="pi-link-btn glyphicon glyphicon-pencil" aria-hidden="true"></a>
+                    <a href="javascript:void(0);" ng-click="onEnable(job)" class="pi-link-btn glyphicon glyphicon-ban-circle" aria-hidden="true"></a>
+                    <a href="javascript:void(0);" ng-click="onDelete(job)" class="pi-link-btn glyphicon glyphicon-remove-circle" aria-hidden="true"></a>
                 </div>
             </div>
             <div class="list-group-item-text row">
@@ -131,28 +132,50 @@
                     <span class="label label-primary">{{ job.lang }}</span>
                     <span class="label label-default">{{ job.cron }}</span>
                 </div>
-
-                <div class="col-md-2">
-
-                </div>
             </div>
         </div>
     </div>
 
-
-    <div>
+    <div ng-show="isEditing">
         <div class="row">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-addon">Title</span>
+                    <input type="text" class="form-control" placeholder="Untitled" value="{{ metadata.title }}">
+                </div>
+            </div>
 
+            <div class="col-md-2">
+                <div class="input-group">
+                    <span class="input-group-addon">Cron</span>
+                    <input type="text" class="form-control" placeholder="* * * * *" value="{{ metadata.cron }}">
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default">{{ metadata.lang }}</button>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="javascript:void(0);" ng-click="onLang('bash')">bash</a></li>
+                        <li><a href="javascript:void(0);" ng-click="onLang('python')">python</a></li>
+                        <li><a href="javascript:void(0);" ng-click="onLang('node.js')">node.js</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-4" align="right">
+                <button type="button" class="btn btn-success" ng-click="onRun(metadata.id)" >Run</button>
+                <button type="button" class="btn btn-primary" ng-click="onSave(metadata.id)" >Save</button>
+                <button type="button" class="btn btn-default" ng-click="onCancel(metadata.id)" >Cancel</button>
+            </div>
         </div>
+
         <div id="nv-editor" class="pi-code-ed"></div>
     </div>
-
-    <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script>
-        var editor = ace.edit("nv-editor");
-        editor.setTheme("ace/theme/monokai");
-        editor.getSession().setMode("ace/mode/sh");
-    </script>
 
     </div> <!-- console -->
 

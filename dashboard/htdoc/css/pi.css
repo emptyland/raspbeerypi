@@ -5,6 +5,7 @@ a.pi-link-btn {
 
 div.pi-code-ed {
     position: relative;
-    height: 400px;
+    top: 10px;
+    min-height: 400px;
     z-index: 100;
 }
