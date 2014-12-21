@@ -1,6 +1,9 @@
 *.a
 *.o
 *.swp
-dashborad/jobs/metadata.json
 dashboard/pem
 dashboard/bin
+dashboard/conf.json
+dashboard/jobs/metadata.json
+dashboard/jobs/*.script
+dashboard/jobs/crontab

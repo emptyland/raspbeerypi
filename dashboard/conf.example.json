@@ -15,6 +15,7 @@
         },
         "pwd": "jobs",
         "metadata": "jobs/metadata.json",
+        "crontab": "jobs/crontab",
         "lang": {
             "bash": ["/bin/bash"],
             "python": ["/usr/bin/python"],

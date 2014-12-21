@@ -35,6 +35,7 @@ type jobContentVO struct {
 	ID     int    `json:"id"`
 	Title  string `json:"title"`
 	Desc   string `json:"desc"`
+	User   string `json:"user"`
 	Code   string `json:"code"`
 	Lang   string `json:"lang"`
 	Cron   string `json:"cron"`
@@ -63,5 +64,6 @@ type JobEnvDef struct {
 	Env  map[string]string   `json:"env"`
 	Pwd  string              `json:"pwd"`
 	Metadata string          `json:"metadata"`
+	Crontab  string `json:"crontab"`
 	Lang map[string][]string `json:"lang"`
 }

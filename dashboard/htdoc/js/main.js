@@ -121,6 +121,7 @@ app.controller('JobController', function ($scope, $http) {
             title: '',
             desc: '',
             cron: '',
+            user: 'root',
             lang: 'bash',
             enable: true
         };
@@ -133,22 +134,36 @@ app.controller('JobController', function ($scope, $http) {
 
         $scope.onLang(job.lang);
         $scope.editor.setValue(job.code);
-        $scope.isEditing = true;
 
-        $scope.result = {
-            category: 'none',
-            msg: ''
-        };
+        $scope.onEditing(true);
     };
 
-    $scope.onEnable = function (index) {
-        console.log('onEnable');
-        console.log(index);
+    $scope.onEnable = function (job) {
+        job.enable = !job.enable
+        $http.post('/api/job/content',
+            { entries: [ job ] }
+        ).error(function (data) {
+            job.enable = !job.enable; // rollback
+
+            $scope.result = {
+                category: 'danger',
+                output: [data]
+            };
+        });
     }
 
-    $scope.onDelete = function (index) {
-        console.log('onDelete');
-        console.log(index);
+    $scope.onDelete = function (job) {
+        $http.post('/api/job/delete',
+            { entries: [ job ] }
+        ).success(function (data) {
+            delete $scope.jobs[job.id];
+        }).error(function (data) {
+
+            $scope.result = {
+                category: 'danger',
+                output: [data]
+            };
+        });
     }
 
     var langs = {
@@ -220,12 +235,21 @@ app.controller('JobController', function ($scope, $http) {
             } else {
                 $scope.jobs[id] = $scope.metadata;
             }
-            $scope.isEditing = false;
+
+            $scope.onEditing(false);
         });
     };
 
     $scope.onCancel = function (index) {
-        $scope.isEditing = false;
+        $scope.onEditing(false);
+    };
+
+    $scope.onEditing = function (isEditing) {
+        $scope.result = {
+            category: 'none',
+            msg: ''
+        };
+        $scope.isEditing = isEditing;
     };
 
     $scope.onRun = function (index) {
@@ -256,10 +280,7 @@ app.controller('JobController', function ($scope, $http) {
         });
     };
 
-    $scope.result = {
-        category: 'none',
-        msg: ''
-    };
+    $scope.onEditing(false);
 });
 
 }()); // end of module

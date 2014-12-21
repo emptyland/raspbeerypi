@@ -60,7 +60,8 @@ func (self *JobModel) PostApiJobContent(res *jobOperationResponse, req *jobConte
 
 	storeJobs(self.jobEnv.Metadata, self.jobs)
 	res.Ok = true
-	return nil
+
+	return self.generate()
 }
 
 func (self *JobModel) PostApiJobRun(res *jobOperationResponse, req *jobContentRequest) error {
@@ -68,6 +69,67 @@ func (self *JobModel) PostApiJobRun(res *jobOperationResponse, req *jobContentRe
 	res.Output = make([]string, 0)
 	for _, job := range req.Entries {
 		return self.runJob(res, &job)
+	}
+
+	return nil
+}
+
+func (self *JobModel) PostApiJobDelete(res *jobOperationResponse, req *jobContentRequest) error {
+	newNum := 0
+	for _, job := range req.Entries {
+		if _, ok := self.jobsByID[job.ID]; ok {
+			self.jobsByID[job.ID] = -1
+			newNum++
+		} else {
+			return fmt.Errorf("can not find jobID: %d", job.ID)
+		}
+	}
+	newNum = len(self.jobs) - newNum
+
+	newJobs := make([]jobContentVO, newNum)
+	i := 0
+	for _, job := range self.jobs {
+		if id := self.jobsByID[job.ID]; id != -1 {
+			newJobs[i] = job
+			i++
+		}
+	}
+	self.jobs = newJobs
+	self.syncIndex()
+
+	return self.generate()
+}
+
+func (self *JobModel) generate() error {
+	crontabFile, err := os.Create(self.jobEnv.Crontab)
+	if err != nil {
+		return err
+	}
+	defer crontabFile.Close()
+
+	for _, job := range self.jobs {
+		if !job.Enable {
+			continue
+		}
+		stubFileName := fmt.Sprintf("%s/%03d.script", self.jobEnv.Pwd, job.ID)
+		var stubFile *os.File
+		if stubFile, err = os.Create(stubFileName); err != nil {
+			return err
+		}
+		defer stubFile.Close()
+
+		if _, err = stubFile.Write([]byte(job.Code)); err != nil {
+			return err;
+		}
+
+		// cron user exec args
+		fmt.Fprintf(crontabFile, "%s %s ", job.Cron, job.User)
+
+		execv := self.jobEnv.Lang[job.Lang]
+		for _, segment := range execv {
+			fmt.Fprintf(crontabFile, "%s ", segment)
+		}
+		crontabFile.Write([]byte(stubFileName + "\n"))
 	}
 
 	return nil

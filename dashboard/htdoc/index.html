@@ -141,7 +141,7 @@
 
     <div ng-show="isEditing">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <div class="input-group">
                     <span class="input-group-addon">Title</span>
                     <input type="text" class="form-control" placeholder="Untitled" ng-model="metadata.title">
@@ -152,6 +152,13 @@
                 <div class="input-group">
                     <span class="input-group-addon">Cron</span>
                     <input type="text" class="form-control" placeholder="* * * * *" ng-model="metadata.cron">
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="input-group">
+                    <span class="input-group-addon">User</span>
+                    <input type="text" class="form-control" placeholder="root" ng-model="metadata.user">
                 </div>
             </div>
 
@@ -180,8 +187,9 @@
         </div>
 
         <div id="nv-editor" class="pi-code-ed"></div>
+    </div>
 
-        <div class="pi-code-ed-result">
+    <div class="pi-code-ed-result">
             <div class="alert alert-success" role="alert" ng-show="result.category === 'success'">
                 <p ng-repeat="line in result.output">
                     <sapn class="glyphicon glyphicon-ok"> </span>{{ line }}
@@ -203,7 +211,6 @@
                 </p>
             </div>
         </div>
-    </div>
 
     </div> <!-- console -->
 
