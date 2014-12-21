@@ -9,3 +9,8 @@ div.pi-code-ed {
     min-height: 400px;
     z-index: 100;
 }
+
+div.pi-code-ed-result {
+    position: relative;
+    top: 20px;
+}

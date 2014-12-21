@@ -46,8 +46,22 @@ type jobContentResponse struct {
 }
 
 type jobContentRequest jobContentResponse
+type jobContentPersistented jobContentResponse
+
+type jobOperationResponse struct {
+	Ok     bool     `json:"ok"`
+	Code   int      `json:"code"`
+	Output []string `json:"output"`
+}
 
 type operationResponse struct {
 	Ok  bool   `json:"ok"`
 	Msg string `json:"msg"`
+}
+
+type JobEnvDef struct {
+	Env  map[string]string   `json:"env"`
+	Pwd  string              `json:"pwd"`
+	Metadata string          `json:"metadata"`
+	Lang map[string][]string `json:"lang"`
 }

@@ -1,5 +1,6 @@
 *.a
 *.o
 *.swp
+dashborad/jobs/metadata.json
 dashboard/pem
 dashboard/bin

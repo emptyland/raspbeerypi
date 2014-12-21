@@ -134,6 +134,9 @@
                 </div>
             </div>
         </div>
+        <div align="right">
+            <a href="javascript:void(0);" ng-click="onNew()">Add New Job...</a>
+        </div>
     </div>
 
     <div ng-show="isEditing">
@@ -141,14 +144,14 @@
             <div class="col-md-4">
                 <div class="input-group">
                     <span class="input-group-addon">Title</span>
-                    <input type="text" class="form-control" placeholder="Untitled" value="{{ metadata.title }}">
+                    <input type="text" class="form-control" placeholder="Untitled" ng-model="metadata.title">
                 </div>
             </div>
 
             <div class="col-md-2">
                 <div class="input-group">
                     <span class="input-group-addon">Cron</span>
-                    <input type="text" class="form-control" placeholder="* * * * *" value="{{ metadata.cron }}">
+                    <input type="text" class="form-control" placeholder="* * * * *" ng-model="metadata.cron">
                 </div>
             </div>
 
@@ -168,13 +171,38 @@
             </div>
 
             <div class="col-md-4" align="right">
-                <button type="button" class="btn btn-success" ng-click="onRun(metadata.id)" >Run</button>
+                <button type="button" class="btn btn-success" disabled ng-show="isRunning" ng-click="onRun(metadata.id)" >Run</button>
+                <button type="button" class="btn btn-success" ng-hide="isRunning" ng-click="onRun(metadata.id)" >Run</button>
+
                 <button type="button" class="btn btn-primary" ng-click="onSave(metadata.id)" >Save</button>
                 <button type="button" class="btn btn-default" ng-click="onCancel(metadata.id)" >Cancel</button>
             </div>
         </div>
 
         <div id="nv-editor" class="pi-code-ed"></div>
+
+        <div class="pi-code-ed-result">
+            <div class="alert alert-success" role="alert" ng-show="result.category === 'success'">
+                <p ng-repeat="line in result.output">
+                    <sapn class="glyphicon glyphicon-ok"> </span>{{ line }}
+                </p>
+            </div>
+            <div class="alert alert-warning" role="alert" ng-show="result.category === 'warning'">
+                <p ng-repeat="line in result.output">
+                    <span class="glyphicon glyphicon-thumbs-down"> </span>{{ line }}
+                </p>
+            </div>
+            <div class="alert alert-info" role="alert" ng-show="result.category === 'info'">
+                <p ng-repeat="line in result.output">
+                    <span class="glyphicon glyphicon-upload"> </span>{{ line }}
+                </p>
+            </div>
+            <div class="alert alert-danger" role="alert" ng-show="result.category === 'danger'">
+                <p ng-repeat="line in result.output">
+                    <span class="glyphicon glyphicon-remove"> </span>{{ line }}
+                </p>
+            </div>
+        </div>
     </div>
 
     </div> <!-- console -->

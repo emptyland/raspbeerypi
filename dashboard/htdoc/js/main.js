@@ -112,8 +112,21 @@ app.controller('JobController', function ($scope, $http) {
     };
     updateList();
 
-
     $scope.isEditing = false;
+    $scope.isRunning = false;
+
+    $scope.onNew = function () {
+        var job = {
+            id: -1,
+            title: '',
+            desc: '',
+            cron: '',
+            lang: 'bash',
+            enable: true
+        };
+
+        $scope.onEdit(job)
+    };
 
     $scope.onEdit = function (job) {
         $scope.metadata = job;
@@ -121,6 +134,11 @@ app.controller('JobController', function ($scope, $http) {
         $scope.onLang(job.lang);
         $scope.editor.setValue(job.code);
         $scope.isEditing = true;
+
+        $scope.result = {
+            category: 'none',
+            msg: ''
+        };
     };
 
     $scope.onEnable = function (index) {
@@ -173,13 +191,36 @@ app.controller('JobController', function ($scope, $http) {
     $scope.onSave = function (id) {
         $scope.metadata.code = $scope.editor.getValue();
 
+        if (typeof $scope.metadata.title != 'string' ||
+            $scope.metadata.title === '') {
+
+            console.log($scope.metadata);
+            $scope.result = {
+                category: 'warning',
+                output: ['title can not be empty.']
+            };
+            return;
+        }
+
+        if (typeof $scope.metadata.cron != 'string' ||
+            $scope.metadata.cron === '') {
+
+            $scope.result = {
+                category: 'warning',
+                output: ['cron can not be empty.']
+            };
+            return;
+        }
+
         $http.post('/api/job/content',
             { entries: [ $scope.metadata ] }
         ).success(function (data) {
-            $scope.jobs[id] = $scope.metadata;
+            if (id === -1) {
+                updateList();
+            } else {
+                $scope.jobs[id] = $scope.metadata;
+            }
             $scope.isEditing = false;
-
-            console.log(data);
         });
     };
 
@@ -188,14 +229,37 @@ app.controller('JobController', function ($scope, $http) {
     };
 
     $scope.onRun = function (index) {
+        $scope.metadata.code = $scope.editor.getValue();
+
+        $scope.result = {
+            category: "info",
+            output: ["Running ..."]
+        };
+        $scope.isRunning = true;
+
         $http.post('/api/job/run',
             { entries: [ $scope.metadata ] }
         ).success(function (data) {
-            console.log(data);
+            $scope.result = {
+                category: data.ok ? "success" : "danger",
+                output: data.output
+            };
+
+            $scope.isRunning = false;
         }).error(function (data) {
-            console.log(data);
+            $scope.result = {
+                category: 'danger',
+                output: [data]
+            };
+
+            $scope.isRunning = false;
         });
-    }
+    };
+
+    $scope.result = {
+        category: 'none',
+        msg: ''
+    };
 });
 
 }()); // end of module

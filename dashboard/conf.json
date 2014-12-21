@@ -7,5 +7,18 @@
         "root": "htdoc",
         "mapping": {
         }
+    },
+    "job_env": {
+        "env": {
+            "PI_PWD": "jobs",
+            "PI_VER": "1.0.1"
+        },
+        "pwd": "jobs",
+        "metadata": "jobs/metadata.json",
+        "lang": {
+            "bash": ["/bin/bash"],
+            "python": ["/usr/bin/python"],
+            "node.js": ["/usr/local/bin/node"]
+        }
     }
 }
