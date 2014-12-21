@@ -96,7 +96,7 @@ func (self *JobModel) PostApiJobDelete(res *jobOperationResponse, req *jobConten
 	}
 	self.jobs = newJobs
 	self.syncIndex()
-
+	storeJobs(self.jobEnv.Metadata, self.jobs)
 	return self.generate()
 }
 
