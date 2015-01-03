@@ -16,6 +16,10 @@ var _ = (api.Model)(&FileManagementModel{})
 var _ = log.Println
 
 func NewFileManagementService(fileEnv *FileEnvDef) *api.Service {
+	if fileEnv.Home == "" {
+		log.Fatal("file_env.home can not be empty!")
+	}
+
 	fileModel := &FileManagementModel{
 		fileEnv: fileEnv,
 	}
@@ -23,11 +27,7 @@ func NewFileManagementService(fileEnv *FileEnvDef) *api.Service {
 	return api.NewService(fileModel)
 }
 
-// api/file/list
-// api/file/delete
-// api/file/new
-// api/file/download/path/to/file
-// api/file/upload/path/to/file
+// api/file/{list|delete|new|download|upload}/path/to/file
 func (self *FileManagementModel) Access(appKey string, token string) bool {
 	return true
 }
@@ -54,11 +54,13 @@ func (self *FileManagementModel) PrefixGetApiFileList(w http.ResponseWriter, r *
 	if err != nil {
 		return err
 	}
+	defer dir.Close()
 
 	var fileInfos []os.FileInfo
 	if fileInfos, err = dir.Readdir(0); err != nil {
 		return err
 	}
+
 	for _, fileInfo := range fileInfos {
 		switch fileInfo.Name() {
 		case ".", "..":
@@ -74,9 +76,13 @@ func (self *FileManagementModel) PrefixGetApiFileList(w http.ResponseWriter, r *
 		}
 
 		if fileInfo.IsDir() {
-			vo.Type = "Directory"
+			vo.Type = "Directory";
+			if vo.Contain, err = getDirContain(self.fileEnv.Home + path + "/" + vo.Name); err != nil {
+				return err
+			}
 		} else {
-			vo.Type = "File"
+			vo.Type = "File";
+			vo.Contain = -1;
 		}
 
 		rep.Entries = append(rep.Entries, vo)
@@ -84,4 +90,19 @@ func (self *FileManagementModel) PrefixGetApiFileList(w http.ResponseWriter, r *
 
 	api.EncodeJson(w, &rep)
 	return nil
+}
+
+func getDirContain(dirName string) (int, error) {
+	dir, err := os.Open(dirName)
+	if err != nil {
+		return 0, err
+	}
+	defer dir.Close()
+
+	var fileInfos []os.FileInfo
+	if fileInfos, err = dir.Readdir(0); err != nil {
+		return 0, err
+	}
+
+	return len(fileInfos), nil
 }
