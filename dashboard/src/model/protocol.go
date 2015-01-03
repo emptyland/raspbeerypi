@@ -61,9 +61,27 @@ type operationResponse struct {
 }
 
 type JobEnvDef struct {
-	Env  map[string]string   `json:"env"`
-	Pwd  string              `json:"pwd"`
-	Metadata string          `json:"metadata"`
-	Crontab  string `json:"crontab"`
-	Lang map[string][]string `json:"lang"`
+	Env      map[string]string   `json:"env"`
+	Pwd      string              `json:"pwd"`
+	Metadata string              `json:"metadata"`
+	Crontab  string              `json:"crontab"`
+	Lang     map[string][]string `json:"lang"`
+}
+
+type FileEnvDef struct {
+	Home string `json:"home"`
+}
+
+type fileStatReponse struct {
+	Entries []fileStatVO `json:"entries"`
+}
+
+type fileStatVO struct {
+	Name    string `json:"name"`
+	Type    string `json:"type"`
+	Mode    int16  `json:"mode"`
+	Contain int    `json:"contain"`
+	Size    int64  `json:"size"`
+	ModTime string `json:"modTime"`
+	IsDir   bool   `json:"isDir"`
 }

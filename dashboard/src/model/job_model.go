@@ -1,14 +1,14 @@
 package model
 
 import (
+	"bufio"
+	"encoding/json"
 	"fmt"
-	"time"
 	"io"
+	"log"
 	"os"
 	"os/exec"
-	"bufio"
-	"log"
-	"encoding/json"
+	"time"
 
 	"api"
 )
@@ -27,8 +27,8 @@ var _ = log.Println
 
 func NewJobService(jobEnv *JobEnvDef) *api.Service {
 	jobModel := &JobModel{
-		jobs:     loadJobs(jobEnv.Metadata),
-		jobEnv:   jobEnv,
+		jobs:   loadJobs(jobEnv.Metadata),
+		jobEnv: jobEnv,
 	}
 
 	jobModel.syncIndex()
@@ -119,7 +119,7 @@ func (self *JobModel) generate() error {
 		defer stubFile.Close()
 
 		if _, err = stubFile.Write([]byte(job.Code)); err != nil {
-			return err;
+			return err
 		}
 
 		// cron user exec args
@@ -156,7 +156,7 @@ func (self *JobModel) runJob(res *jobOperationResponse, job *jobContentVO) error
 		log.Println("get stdout pipe fail:", err)
 		return err
 	}
-	if stdin,  err = cmd.StdinPipe(); err != nil {
+	if stdin, err = cmd.StdinPipe(); err != nil {
 		log.Println("get stdin pipe fail:", err)
 		return err
 	}
@@ -206,7 +206,7 @@ func (self *JobModel) syncIndex() {
 }
 
 func loadJobs(fileName string) (rv []jobContentVO) {
-	jobs := &jobContentPersistented {}
+	jobs := &jobContentPersistented{}
 
 	rd, err := os.Open(fileName)
 	if err != nil {
@@ -224,7 +224,7 @@ func loadJobs(fileName string) (rv []jobContentVO) {
 }
 
 func storeJobs(fileName string, vos []jobContentVO) {
-	jobs := &jobContentPersistented {
+	jobs := &jobContentPersistented{
 		Entries: vos,
 	}
 

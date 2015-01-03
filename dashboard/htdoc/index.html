@@ -9,7 +9,7 @@
     <script src="js/angular.min.js"></script>
     <script src="js/angular-cookies.js"></script>
     <script src="js/highcharts-custom.js"></script>
-    <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/main.js"></script>
     <title>Raspbeery Pi</title>
     </head>
@@ -33,6 +33,7 @@
                 <ul class="nav navbar-nav">
                     <li class="{{ navBars.dashboard.active }}"><a href="#" ng-click="switchNavBar('dashboard')">Dashboard</a></li>
                     <li class="{{ navBars.console.active }}"><a href="#" ng-click="switchNavBar('console')">Console</a></li>
+                    <li class="{{ navBars.file.active }}"><a href="#" ng-click="switchNavBar('file')">File</a></li>
                     <li class="{{ navBars.devices.active }}"><a href="#" ng-click="switchNavBar('devices')">Devices</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -213,6 +214,45 @@
         </div>
 
     </div> <!-- console -->
+
+    <div class="container" ng-controller="FileController" ng-show="navBars.current === 'file'">
+        <ol class="breadcrumb">
+            <li ng-repeat="dir in pathDirs"><a href="javascript:void(0);" ng-click="onPathDir(dir.index)">{{ dir.name }}</a></li>
+        </ol>
+
+        <ul class="list-group">
+
+            <li class="list-group-item {{ entry.name === current ? 'list-group-item-info' : '' }}" ng-click="onSwitch(entry)" ng-repeat="entry in fileEntries">
+                <div class="row">
+                    <div class="col-md-4">
+                    <span class="glyphicon glyphicon-folder-close" ng-show="entry.isDir"></span>
+                    <span class="glyphicon glyphicon-file" ng-hide="entry.isDir"></span>
+                    <a href="javascript:void(0);" ng-click="onReadDir(entry)">{{ entry.name }}</a>
+                    <span class="badge" ng-show="entry.isDir">{{ entry.contain }}</span>
+                    </div>
+
+                    <div class="col-md-2">
+                        {{ entry.type }}
+                    </div>
+
+                    <div class="col-md-2" ng-hide="entry.isDir">
+                        {{ entry.modTime }}
+                    </div>
+
+                    <div class="col-md-2" ng-show="entry.isDir">
+
+                    </div>
+
+                    <div class="col-md-4" align="right" ng-show="current === entry.name">
+                        <a href="#" class="glyphicon glyphicon-download-alt" ng-hide="entry.isDir">Download</a>
+                        <a href="#" class="glyphicon glyphicon-pencil">Rename</a>
+                        <a href="#" class="glyphicon glyphicon-trash">Delete</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+    </div>
 
     <div class="container" ng-show="navBars.current === 'devices'">
         Devices

@@ -6,7 +6,7 @@ var app = angular.module('dashboard', ['ngCookies']);
 
 app.controller('NavController', function($scope, $cookies) {
     var navBars = {
-        'dashboard': {}, 'console': {}, 'devices': {},
+        'dashboard': {}, 'console': {}, 'file': {}, 'devices': {},
 
         current: 'dashboard'
     };
@@ -281,6 +281,84 @@ app.controller('JobController', function ($scope, $http) {
     };
 
     $scope.onEditing(false);
+});
+
+app.controller('FileController', function($scope, $http) {
+    $scope.pathDirs = [
+        {
+            index: 1,
+            name: 'Home'
+        }
+    ];
+
+    // $scope.fileEntries = [
+    //     {
+    //         name: 'bull',
+    //         type: 'Directory',
+    //         isDir: true,
+    //         containNum: 14
+    //     }, {
+    //         name: 'balls',
+    //         type: 'File',
+    //         isDir: false,
+    //         wtime: '2015-01-01 12:00'
+    //     }
+    // ];
+    $scope.fileEntries = [];
+
+    $scope.current = '';
+
+    $scope.onPathDir = function (index) {
+        var newDirs = []
+        for (var i = 0; i < index; i++) {
+            newDirs[i] = $scope.pathDirs[i];
+        }
+
+        $scope.pathDirs = newDirs;
+        $scope.readDir(index)
+    };
+
+    $scope.onReadDir = function (entry) {
+        if (!entry.isDir) {
+            return;
+        }
+
+        var name = entry.name;
+        var newDirs = []
+        for (var i in $scope.pathDirs) {
+            newDirs[i] = $scope.pathDirs[i];
+        }
+        var index = $scope.pathDirs.length + 1
+        newDirs[$scope.pathDirs.length] = {
+            'index': index,
+            'name': name
+        };
+
+        $scope.pathDirs = newDirs;
+        $scope.onPathDir(index);
+    };
+
+    $scope.onSwitch = function (entry) {
+        $scope.current = entry.name;
+    };
+
+    $scope.readDir = function (index) {
+        var path = ''
+        for (var i = 1; i < index; i++) {
+            path += ('/' + $scope.pathDirs[i].name);
+        }
+
+        if (index == 0) {
+            path = '/'
+        }
+
+        $http.get('api/file/list' + path).success(function(data) {
+            $scope.current = data.entries[0].name;
+            $scope.fileEntries = data.entries;
+        });
+    };
+
+    $scope.readDir($scope.pathDirs[0].index);
 });
 
 }()); // end of module

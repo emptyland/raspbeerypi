@@ -15,12 +15,13 @@ import (
 var _ = fmt.Println
 
 type Conf struct {
-	PemCrt  string          `json:"pem_crt"`
-	PemKey  string          `json:"pem_key"`
-	Address string          `json:"address"`
-	Timeout int64           `json:"timeout"`
-	HTDoc   HTDocDef        `json:"htdoc"`
-	JobEnv  model.JobEnvDef `json:"job_env"`
+	PemCrt  string           `json:"pem_crt"`
+	PemKey  string           `json:"pem_key"`
+	Address string           `json:"address"`
+	Timeout int64            `json:"timeout"`
+	HTDoc   HTDocDef         `json:"htdoc"`
+	JobEnv  model.JobEnvDef  `json:"job_env"`
+	FileEnv model.FileEnvDef `json:"file_env"`
 }
 
 type HTDocDef struct {
@@ -55,6 +56,7 @@ func serve(conf *Conf) {
 	handler.Handle("/api/memory", api.NewService(&model.MemoryModel{}))
 	handler.Handle("/api/disk", api.NewService(&model.DiskUsageModel{}))
 	handler.Handle("/api/job/", model.NewJobService(&conf.JobEnv))
+	handler.Handle("/api/file/", model.NewFileManagementService(&conf.FileEnv))
 
 	proxy := &fileServerProxy{
 		Handler: http.FileServer(http.Dir(conf.HTDoc.Root)),
