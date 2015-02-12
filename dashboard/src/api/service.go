@@ -10,6 +10,13 @@ import (
 
 type Service struct {
 	ForServe Model
+
+	prefixTri map[string]prefixMethodEntry
+}
+
+type prefixMethodEntry struct {
+	method     reflect.Value
+	httpMethod string
 }
 
 type Model interface {
@@ -25,10 +32,70 @@ const (
 	kErrPermDenied     = "Permission denied"
 	kErrMethodNotFound = "Method not found"
 	kErrInternal       = "Server internal error"
+
+	kPrefix = "Prefix"
 )
 
+// Prefix-Get|Post-Path-To
 func NewService(model Model) *Service {
-	return &Service{ForServe: model}
+	self := &Service{
+		ForServe:  model,
+		prefixTri: make(map[string]prefixMethodEntry),
+	}
+
+	return self.registerAll()
+}
+
+func (self *Service) registerAll() *Service {
+	stub := reflect.ValueOf(self.ForServe)
+	stubTy := stub.Type()
+
+	for i := 0; i < stubTy.NumMethod(); i++ {
+		method := stubTy.Method(i)
+
+		var entry prefixMethodEntry
+		if !strings.HasPrefix(method.Name, kPrefix) {
+			continue
+		}
+
+		partial := method.Name[len(kPrefix):]
+
+		if strings.HasPrefix(partial, "Get") {
+			entry.httpMethod = "Get"
+		} else if strings.HasPrefix(partial, "Post") {
+			entry.httpMethod = "Post"
+		} else {
+			log.Fatal("bad method.name", method.Name)
+		}
+
+		partial = titleToPath(partial[len(entry.httpMethod):])
+
+		entry.method = stub.MethodByName(method.Name)
+
+		self.prefixTri[partial] = entry
+	}
+
+	return self
+}
+
+func titleToPath(title string) string {
+	path := ""
+	var i, p int
+	var ch rune
+
+	for i, ch = range title {
+		if i == 0 {
+			continue
+		}
+		switch ch {
+		case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z':
+			path += "/" + strings.ToLower(title[p:i])
+			p = i
+		}
+	}
+	path += "/" + strings.ToLower(title[p:])
+
+	return path
 }
 
 func (self *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -46,6 +113,13 @@ func (self *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		if !self.ForServe.Access(appKey, token) {
 			http.Error(w, kErrPermDenied, 503)
+			return
+		}
+	}
+
+	for prefix, entry := range self.prefixTri {
+		if strings.HasPrefix(url.Path, prefix) {
+			dispatchPrefixMethod(w, r, url.Path[len(prefix):], entry.method)
 			return
 		}
 	}
@@ -77,6 +151,30 @@ func (self *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	dispatchMethod(w, r, method)
 
+}
+
+func dispatchPrefixMethod(w http.ResponseWriter, r *http.Request, path string, method reflect.Value) {
+	methodTy := method.Type()
+
+	if methodTy.NumIn() != 3 || methodTy.NumOut() != 1 {
+
+		log.Fatal("bad prefix method prototype.")
+		return
+	}
+
+	inputs := []reflect.Value{reflect.ValueOf(w), reflect.ValueOf(r), reflect.ValueOf(path)}
+	rv := method.Call(inputs)
+
+	if len(rv) >= 1 {
+		if !rv[0].IsNil() && rv[0].Kind() == reflect.Interface {
+			if err, ok := rv[0].Interface().(error); ok {
+				http.Error(w, kErrInternal, 503)
+
+				log.Printf("call fail(%v): %v", method.Type(), err)
+				return
+			}
+		}
+	}
 }
 
 func dispatchMethod(w http.ResponseWriter, r *http.Request, method reflect.Value) {
@@ -132,6 +230,13 @@ func call(w http.ResponseWriter, method reflect.Value, inputs []reflect.Value) {
 
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(inputs[0].Interface()); err != nil {
+		log.Printf("write back fail: %v", err)
+	}
+}
+
+func EncodeJson(w http.ResponseWriter, input interface{}) {
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(input); err != nil {
 		log.Printf("write back fail: %v", err)
 	}
 }
